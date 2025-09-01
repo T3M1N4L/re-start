@@ -64,10 +64,14 @@
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
+        min-height: 0;
     }
-    /* Make the two left panels split the full column height */
     .left-col > .panel {
-        flex: 1 1 0;
+        flex: 0 0 auto;
+    }
+    .left-col > .image-panel {
+        flex: 1 1 auto;
+        min-height: 0;
     }
     .top,
     .widgets {
@@ -88,3 +92,4 @@
         opacity: 1;
     }
 </style>
+

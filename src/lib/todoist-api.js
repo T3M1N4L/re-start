@@ -1,6 +1,4 @@
-/**
- * Todoist API client using the Sync endpoint for efficient data retrieval
- */
+
 class TodoistAPI {
     constructor(token) {
         this.token = token
@@ -12,9 +10,7 @@ class TodoistAPI {
         this.data = JSON.parse(localStorage.getItem(this.dataKey) || '{}')
     }
 
-    /**
-     * Perform a sync request to get tasks and related data
-     */
+    
     async sync(
         resourceTypes = ['items', 'labels', 'projects'],
         isRetry = false
@@ -57,9 +53,7 @@ class TodoistAPI {
         }
     }
 
-    /**
-     * Update local data storage with sync response
-     */
+    
     updateLocalData(syncData) {
         if (syncData.full_sync) {
             this.data = {
@@ -68,7 +62,7 @@ class TodoistAPI {
                 projects: syncData.projects || [],
             }
         } else {
-            // Merge incremental updates
+
             this.mergeData('items', syncData.items)
             this.mergeData('labels', syncData.labels)
             this.mergeData('projects', syncData.projects)
@@ -77,9 +71,7 @@ class TodoistAPI {
         localStorage.setItem(this.dataKey, JSON.stringify(this.data))
     }
 
-    /**
-     * Generic merge function for all data types
-     */
+    
     mergeData(type, newData) {
         if (!newData) return
         if (!this.data[type]) this.data[type] = []
@@ -102,22 +94,18 @@ class TodoistAPI {
         })
     }
 
-    /**
-     * Get upcoming tasks and recently completed tasks
-     */
+    
     getTasks() {
         if (!this.data.items) return []
 
-        const recentThreshold = new Date(new Date().getTime() - 5 * 60 * 1000) // 5 minutes ago
+        const recentThreshold = new Date(new Date().getTime() - 5 * 60 * 1000) 
 
         const mappedTasks = this.data.items
             .filter((item) => {
                 if (item.is_deleted) return false
 
-                // Include unchecked tasks
                 if (!item.checked) return true
 
-                // Include recently completed tasks (within last 5 minutes)
                 if (item.checked && item.completed_at) {
                     const completedAt = new Date(item.completed_at)
                     return completedAt > recentThreshold
@@ -134,7 +122,7 @@ class TodoistAPI {
                         dueDate = new Date(item.due.date)
                         hasTime = true
                     } else {
-                        // offset to 23:59:59 if no time is provided
+
                         dueDate = new Date(item.due.date + 'T23:59:59')
                     }
                 }
@@ -151,15 +139,12 @@ class TodoistAPI {
         return TodoistAPI.sortTasks(mappedTasks)
     }
 
-    /**
-     * Static method to sort tasks
-     */
+    
     static sortTasks(tasks) {
         return tasks.sort((a, b) => {
-            // Unchecked tasks first
+
             if (a.checked !== b.checked) return a.checked ? 1 : -1
 
-            // Checked tasks: sort by completed_at (recent first), fallback to due date, then child_order
             if (a.checked) {
                 if (a.completed_at && b.completed_at) {
                     const diff =
@@ -169,11 +154,9 @@ class TodoistAPI {
                 }
             }
 
-            // Unchecked tasks with due dates first
             if (!a.due_date && b.due_date) return 1
             if (a.due_date && !b.due_date) return -1
 
-            // Unchecked tasks with due date: sort by due date, fallback to child order
             if (a.due_date !== null) {
                 const diff = a.due_date.getTime() - b.due_date.getTime()
                 if (diff !== 0) return diff
@@ -183,16 +166,12 @@ class TodoistAPI {
         })
     }
 
-    /**
-     * Get project name by ID
-     */
+    
     getProjectName(projectId) {
         return this.data.projects?.find((p) => p.id === projectId)?.name || ''
     }
 
-    /**
-     * Get label names by label IDs
-     */
+    
     getLabelNames(labelIds) {
         if (!labelIds || !this.data.labels) return []
         return labelIds
@@ -200,9 +179,7 @@ class TodoistAPI {
             .filter(Boolean)
     }
 
-    /**
-     * Complete a task
-     */
+    
     async completeTask(taskId) {
         const commands = [
             {
@@ -217,9 +194,7 @@ class TodoistAPI {
         return this.executeCommands(commands)
     }
 
-    /**
-     * Uncomplete a task (undo completion)
-     */
+    
     async uncompleteTask(taskId) {
         const commands = [
             {
@@ -234,9 +209,7 @@ class TodoistAPI {
         return this.executeCommands(commands)
     }
 
-    /**
-     * Execute sync commands
-     */
+    
     async executeCommands(commands) {
         const formData = new FormData()
         formData.append('commands', JSON.stringify(commands))
@@ -260,9 +233,7 @@ class TodoistAPI {
         return data
     }
 
-    /**
-     * Clear local storage when the API token changes
-     */
+    
     clearLocalData() {
         localStorage.removeItem(this.syncTokenKey)
         localStorage.removeItem(this.dataKey)

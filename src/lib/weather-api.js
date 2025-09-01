@@ -1,8 +1,6 @@
 import descriptions from '../assets/descriptions.json'
 
-/**
- * OpenMeteo Weather API client with data processing utilities
- */
+
 class WeatherAPI {
     constructor() {
         this.baseUrl = 'https://api.open-meteo.com/v1/forecast'
@@ -10,9 +8,7 @@ class WeatherAPI {
         this.cacheExpiry = 15 * 60 * 1000
     }
 
-    /**
-     * Get weather data from API and cache it
-     */
+    
     async getWeather(
         latitude,
         longitude,
@@ -38,9 +34,7 @@ class WeatherAPI {
         }
     }
 
-    /**
-     * Get cached weather data with staleness info
-     */
+    
     getCachedWeather(timeFormat = '12hr') {
         const cached = this._getCachedData()
 
@@ -63,9 +57,7 @@ class WeatherAPI {
         }
     }
 
-    /**
-     * Get cached data with expiration status
-     */
+    
     _getCachedData() {
         try {
             const cached = localStorage.getItem(this.cacheKey)
@@ -83,16 +75,12 @@ class WeatherAPI {
         }
     }
 
-    /**
-     * Clear the weather cache
-     */
+    
     clearCache() {
         localStorage.removeItem(this.cacheKey)
     }
 
-    /**
-     * Private method to fetch raw weather data from API
-     */
+    
     async _fetchWeatherData(
         latitude,
         longitude,
@@ -119,9 +107,7 @@ class WeatherAPI {
         return data
     }
 
-    /**
-     * Process current weather data with descriptions
-     */
+    
     _processCurrentWeather(currentData) {
         currentData.temperature_2m = currentData.temperature_2m.toFixed(0)
         currentData.wind_speed_10m = currentData.wind_speed_10m.toFixed(0)
@@ -136,14 +122,11 @@ class WeatherAPI {
         }
     }
 
-    /**
-     * Process hourly forecast to get every 3rd hour starting 3 hours from current hour
-     */
+    
     _processHourlyForecast(hourlyData, currentTime, timeFormat = '12hr') {
         const currentHour = new Date(currentTime).getHours()
         const forecasts = []
 
-        // Find the current hour in the forecast
         let currentIndex = 0
         for (let i = 0; i < hourlyData.time.length; i++) {
             const forecastHour = new Date(hourlyData.time[i]).getHours()
@@ -153,7 +136,6 @@ class WeatherAPI {
             }
         }
 
-        // Get forecasts every 3 hours starting from 3 hours after current, up to 5 forecasts
         for (
             let i = 0;
             i < 5 && currentIndex + (i + 1) * 3 < hourlyData.time.length;
@@ -178,9 +160,7 @@ class WeatherAPI {
         return forecasts
     }
 
-    /**
-     * Get weather description from code
-     */
+    
     _getWeatherDescription(weatherCode, isDay = true) {
         const timeOfDay = isDay ? 'day' : 'night'
         return (
@@ -189,9 +169,7 @@ class WeatherAPI {
         ).toLowerCase()
     }
 
-    /**
-     * Format time to display (e.g., "12pm" for 12hr, "12:00" for 24hr)
-     */
+    
     _formatTime(timeString, timeFormat = '12hr') {
         const date = new Date(timeString)
 
@@ -211,9 +189,7 @@ class WeatherAPI {
         }
     }
 
-    /**
-     * Cache weather data with timestamp
-     */
+    
     _cacheWeather(data) {
         const cacheData = {
             data,

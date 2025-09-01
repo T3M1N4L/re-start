@@ -1,7 +1,6 @@
 <script>
     import { settings } from '../settings-store.svelte.js'
 
-    // Accept data URLs, http(s), and blob URLs
     function isDataUrl(str) {
         return typeof str === 'string' && str.startsWith('data:image/')
     }
@@ -24,19 +23,13 @@
         }
     }
 
-    // Normalize user-entered URLs (add https:// when missing)
     function normalizeUrl(str) {
         if (typeof str !== 'string') return ''
         const trimmed = str.trim()
         if (!trimmed) return ''
-        // Already has a scheme like http:, https:, data:, blob:, file:, etc.
         if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) return trimmed
-        // Otherwise assume https
         return `https://${trimmed}`
     }
-
-    // Default fallback image (GitHub avatar from defaults)
-    const DEFAULT_IMAGE = 'https://avatars.githubusercontent.com/u/108430379?v=4'
 
     function computeImageSrc() {
         const raw = settings.imageDataUrl ?? settings.imageUrl ?? DEFAULT_IMAGE
@@ -47,15 +40,12 @@
 
     let imgSrc = computeImageSrc()
 
-    // Recompute when relevant settings change
     $effect(() => {
-        // access to make them reactive
         void settings.imageDataUrl
         void settings.imageUrl
         imgSrc = computeImageSrc()
     })
 
-    // If the image fails to load (bad URL), fall back to default once
     function onImgError() {
         if (imgSrc !== DEFAULT_IMAGE) {
             imgSrc = DEFAULT_IMAGE
@@ -84,20 +74,25 @@
     .image-panel {
         display: flex;
         flex-direction: column;
+        min-height: 0;
     }
+
     .square {
         width: 100%;
-        aspect-ratio: 1 / 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        flex: 1 1 auto;
+        min-height:0 ;
+        position: relative;
         overflow: hidden;
     }
+
     .image {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
-        object-position: center center;
+        object-fit: contain;
+        object-position: center;
         display: block;
     }
 </style>

@@ -4,7 +4,6 @@
 
     let { showSettings = false, closeSettings } = $props()
 
-    // @ts-ignore
     const version = __APP_VERSION__
 
     function addLink() {
@@ -26,7 +25,6 @@
         }
     }
 
-    // Handle uploading an image and saving it as a data URL in settings
     function handleImageUpload(event) {
         const file = event.target?.files?.[0]
         if (!file) return
@@ -38,7 +36,6 @@
         reader.readAsDataURL(file)
     }
 
-    // Clear any uploaded image so the URL (or default) is used
     function clearUploadedImage() {
         settings.imageDataUrl = null
         saveSettings(settings)
