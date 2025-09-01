@@ -4,7 +4,7 @@
     let query = $state('')
     function onSubmit(event) {
         event.preventDefault()
-        const base = settings.searchBaseUrl || 'https://google.com/search?q='
+        const base = settings.searchBaseUrl
         const q = query.trim()
         if (!q) return
         const url = base + encodeURIComponent(q)
@@ -18,7 +18,7 @@
     <form on:submit={onSubmit} class="form">
         <input
             type="text"
-            placeholder={settings.searchPlaceholder || 'search'}
+            placeholder={settings.searchPlaceholder}
             bind:value={query}
             aria-label="Search"
         />

@@ -6,6 +6,7 @@ let defaultSettings = {
     tempUnit: 'fahrenheit',
     speedUnit: 'mph',
     imageUrl: 'https://avatars.githubusercontent.com/u/108430379?v=4',
+    imageDataUrl: null,
     searchBaseUrl: 'https://google.com/search?q=',
     searchPlaceholder: 'search',
     linksPerColumn: 4,

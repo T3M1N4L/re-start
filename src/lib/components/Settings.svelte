@@ -25,6 +25,26 @@
             handleClose()
         }
     }
+
+    // Handle uploading an image and saving it as a data URL in settings
+    function handleImageUpload(event) {
+        const file = event.target?.files?.[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = () => {
+            settings.imageDataUrl = reader.result
+            saveSettings(settings)
+        }
+        reader.readAsDataURL(file)
+    }
+
+    // Clear any uploaded image so the URL (or default) is used
+    function clearUploadedImage() {
+        settings.imageDataUrl = null
+        saveSettings(settings)
+        const input = document.getElementById('image-upload')
+        if (input) input.value = ''
+    }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -134,6 +154,52 @@
                         kmh
                     </label>
                 </div>
+            </div>
+            <div class="group">
+                <label for="imageUrl">image url</label>
+                <input
+                    id="imageUrl"
+                    type="url"
+                    bind:value={settings.imageUrl}
+                    placeholder="https://example.com/image.jpg"
+                />
+            </div>
+            <div class="group">
+                <label for="image-upload">upload image</label>
+                <div class="upload-row">
+                    <input
+                        id="image-upload"
+                        class="file-input"
+                        type="file"
+                        accept="image/*"
+                        onchange={handleImageUpload}
+                    />
+                    <button type="button" class="upload-btn" onclick={() => document.getElementById('image-upload')?.click()}>
+                        choose file
+                    </button>
+                    {#if settings.imageDataUrl}
+                        <div class="setting-label">using uploaded image</div>
+                        <button type="button" class="remove-btn" onclick={clearUploadedImage}>remove</button>
+                    {/if}
+                </div>
+            </div>
+            <div class="group">
+                <label for="searchBaseUrl">search base url</label>
+                <input
+                    id="searchBaseUrl"
+                    type="url"
+                    bind:value={settings.searchBaseUrl}
+                    placeholder="https://google.com/search?q="
+                />
+            </div>
+            <div class="group">
+                <label for="searchPlaceholder">search placeholder</label>
+                <input
+                    id="searchPlaceholder"
+                    type="text"
+                    bind:value={settings.searchPlaceholder}
+                    placeholder="search"
+                />
             </div>
             <div class="group">
                 <label for="linksPerColumn">links per column</label>
@@ -272,5 +338,13 @@
     }
     .version {
         color: var(--txt-3);
+    }
+    .upload-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .file-input {
+        display: none;
     }
 </style>
