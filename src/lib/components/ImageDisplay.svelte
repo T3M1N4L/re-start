@@ -1,6 +1,10 @@
 <script>
     import { settings } from '../settings-store.svelte.js'
 
+    const props = $props()
+    const panelHeight = $derived(Math.max(0, props.size ?? 0))
+    const panelWidth = $derived(Math.max(0, props.width ?? 0))
+
     function isDataUrl(str) {
         return typeof str === 'string' && str.startsWith('data:image/')
     }
@@ -32,10 +36,10 @@
     }
 
     function computeImageSrc() {
-        const raw = settings.imageDataUrl ?? settings.imageUrl ?? DEFAULT_IMAGE
+        const raw = settings.imageDataUrl ?? settings.imageUrl
         const candidate = isDataUrl(raw) ? raw : normalizeUrl(raw)
         if (isDataUrl(candidate) || isBlobUrl(candidate) || isHttpUrl(candidate)) return candidate
-        return DEFAULT_IMAGE
+        return settings.imageUrl
     }
 
     let imgSrc = computeImageSrc()
@@ -47,17 +51,17 @@
     })
 
     function onImgError() {
-        if (imgSrc !== DEFAULT_IMAGE) {
-            imgSrc = DEFAULT_IMAGE
+        if (imgSrc !== settings.imageUrl) {
+            imgSrc = settings.imageUrl
         }
     }
 
     const altText = 'image'
 </script>
 
-<div class="panel image-panel">
+<div class="panel image-panel" style={`--height: ${panelHeight}px; --width: ${panelWidth}px`}>
     <div class="panel-label">image</div>
-    <div class="square">
+    <div class="image-container" aria-hidden={panelHeight <= 0}>
         <img
             class="image"
             src={imgSrc}
@@ -74,21 +78,34 @@
     .image-panel {
         display: flex;
         flex-direction: column;
-        min-height: 0;
+        align-items: center;
+        justify-content: center;
+        width: var(--width);
+        height: var(--width); /* make it square based on width */
+        padding: 1.5rem;
+        transition: none;
+        box-sizing: border-box;
     }
 
-    .square {
+    .panel-label {
+        position: absolute;
+        top: -14px;
+        left: 8px;
+        background-color: var(--bg-1);
+        color: var(--txt-4);
+        z-index: 10;
+    }
+
+    .image-container {
         width: 100%;
-        flex: 1 1 auto;
-        min-height:0 ;
+        aspect-ratio: 1;
         position: relative;
-        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.05); /* optional for debugging */
     }
 
     .image {
         position: absolute;
-        top: 0;
-        left: 0;
+        inset: 0;
         width: 100%;
         height: 100%;
         object-fit: contain;
