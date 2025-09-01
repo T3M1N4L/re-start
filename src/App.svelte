@@ -5,6 +5,8 @@
     import Clock from './lib/components/Clock.svelte'
     import Stats from './lib/components/Stats.svelte'
     import Settings from './lib/components/Settings.svelte'
+    import SearchBar from './lib/components/SearchBar.svelte'
+    import ImageDisplay from './lib/components/ImageDisplay.svelte'
     import '@fontsource-variable/geist-mono'
 
     let showSettings = $state(false)
@@ -15,16 +17,22 @@
 </script>
 
 <main>
-    <div class="container">
-        <div class="top">
-            <Clock />
-            <Stats />
+    <div class="layout">
+        <div class="left-col">
+            <SearchBar />
+            <ImageDisplay />
         </div>
-        <div class="widgets">
-            <Weather />
-            <Todoist />
+        <div class="right-col">
+            <div class="top">
+                <Clock />
+                <Stats />
+            </div>
+            <div class="widgets">
+                <Weather />
+                <Todoist />
+            </div>
+            <Links />
         </div>
-        <Links />
     </div>
 
     <button
@@ -46,10 +54,20 @@
         justify-content: center;
         align-items: center;
     }
-    .container {
+    .layout {
+        display: flex;
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    .left-col,
+    .right-col {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
+    }
+    /* Make the two left panels split the full column height */
+    .left-col > .panel {
+        flex: 1 1 0;
     }
     .top,
     .widgets {

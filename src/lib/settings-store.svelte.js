@@ -5,6 +5,9 @@ let defaultSettings = {
     longitude: null,
     tempUnit: 'fahrenheit',
     speedUnit: 'mph',
+    imageUrl: 'https://avatars.githubusercontent.com/u/108430379?v=4',
+    searchBaseUrl: 'https://google.com/search?q=',
+    searchPlaceholder: 'search',
     linksPerColumn: 4,
     links: [
         { title: 'classroom', url: 'https://classroom.google.com' },
